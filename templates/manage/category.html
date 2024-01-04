@@ -1,0 +1,69 @@
+{% extends "layout.html" %} 
+
+{% block content %}
+<div class="p-1">
+    <button type="button" class="btn btn-outline-primary" onclick="window.location='/manage/category/edit'">Add</button>
+</div>
+<div class="p-1 table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="table-warning">
+                <td scope="col" style="width: 60px;"></td>
+                <td scope="col">Name</td>
+                <td scope="col" style="width:150px;">Commands</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in g.rows %}
+            <tr>
+                <td scope="row" style="text-align: center;">{{ i.id }}</td>
+                <td>{{ i.name }}</td>
+                <td>
+                    <button type="button" class="btn btn-success btn-sm" onclick="edit_category({{ i.id }})">Edit</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="delete_category({{ i.id }})">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="p-1">
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-start">
+            <li class="page-item {{ 'disabled' if g.pageNum == 1 }}">
+                <a class="page-link" href="/manage/category?pageNum={{ g.pageNum - 1 }}" tabindex="-1">Previous</a>
+            </li>
+            {% for i in range(g.totalPage) %}
+            <li class="page-item {{ 'active' if i + 1 == g.pageNum }} ">
+                <a class="page-link" href="/manage/category?pageNum={{ i + 1 }}">{{ i + 1 }}</a>
+            </li>
+            {% endfor %}
+            <li class="page-item {{ 'disabled' if g.pageNum == g.totalPage }}">
+                <a class="page-link" href="/manage/category?pageNum={{ g.pageNum + 1 }}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %} 
+
+{% block script %}
+<script>
+var edit_category = function(id) {
+    window.location = '/manage/category/edit?id=' + id;
+}
+
+var delete_category = function(id) {
+    if (!confirm('Confirm to delete?')) {
+        return
+    }
+    $.post('/manage/category/delete/' + id, function(data) {
+        var obj = JSON.parse(data)
+        if (obj.success == 'true') {
+            window.location.reload();
+        } else {
+            alert(obj.msg);
+        }
+    });
+}
+</script>
+{% endblock %}

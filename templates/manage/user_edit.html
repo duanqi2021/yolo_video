@@ -1,0 +1,58 @@
+{% extends "layout.html" %} 
+
+{% block content %}
+<h3>{{ 'Add New User' if g.id == 0 else 'Edit User "' + g.username + '"' }}</h3>
+<form class="p-1">
+    <input type="hidden" name="id" id="id" value="{{ g.id }}" />
+    <div class="form-group">
+        <label for="name">Username</label>
+        <input type="text" name="username" class="form-control" id="username" placeholder="Enter username" value="{{ g.username }}">
+    </div>
+    <div class="form-group">
+        <label for="name">Password</label>
+        <input type="text" name="password" class="form-control" id="password" placeholder="Enter password" value="{{ g.password }}">
+    </div>
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" name="name" class="form-control" id="name" placeholder="Enter name" value="{{ g.name }}">
+    </div>
+</form>
+<div class="p-1">
+    <button type="button" class="btn btn-outline-primary" onclick="save();">Save</button>
+</div>
+{% endblock %} 
+
+{% block script %}
+<script>
+var save = function() {
+    var id = $('#id').val()
+    var username = $('#username').val()
+    var password = $('#password').val()
+    var name = $('#name').val()
+    if (username == '') {
+        alert('Username cannot be empty!');
+        return;
+    }
+    if (password == '') {
+        alert('Password cannot be empty!');
+        return;
+    }
+    if (name == '') {
+        alert('Name cannot be empty!');
+        return;
+    }
+
+    $.post('/manage/user/edit', {
+        id: id,
+        username: username,
+        password: password,
+        name: name
+    }, function(data) {
+        var obj = JSON.parse(data);
+        if (obj.success == 'true') {
+            window.location = '/manage/user';
+        }
+    })
+}
+</script>
+{% endblock %}

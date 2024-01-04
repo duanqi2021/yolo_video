@@ -1,0 +1,123 @@
+{% extends "layout.html" %} 
+
+{% block content %}
+ <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+
+
+<div class="p-1">
+<!--    <button type="button" class="btn btn-outline-primary" onclick="window.location='/manage/video/edit'">Add</button>-->
+    <form  action="/video" class="btn btn-outline-primary" enctype='multipart/form-data' method='POST'>
+        <input type="file" name="file" >
+        <input   type="submit" onclick="upload()" value="上传">
+
+
+       <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"
+         style="width: 10%">0.00%
+    </div>
+</div>
+        </form>
+</div>
+
+
+
+<div class="p-1 table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="table-warning">
+                <td scope="col" style="width: 60px;"></td>
+                <td scope="col">Category</td>
+                <td scope="col">Name</td>
+                <td scope="col">Path</td>
+                <td scope="col" style="width:150px;">Commands</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in g.rows %}
+            <tr>
+                <td scope="row" style="text-align: center;">{{ i.id }}</td>
+                <td>{{ i.category_name }}</td>
+                <td><a href="#" onclick="window.location='/video/{{ i.id }}';">{{ i.name }}</a></td>
+                <td>{{ i.path }}</td>
+                <td>
+                    <button type="button" class="btn btn-success btn-sm" onclick="edit_video({{ i.id }})">Edit</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="delete_video({{ i.id }})">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="p-1">
+    <nav aria-label="Pagination">
+        <ul class="pagination justify-content-start">
+            <li class="page-item {{ 'disabled' if g.pageNum == 1 }}">
+                <a class="page-link" href="/manage/video?pageNum={{ g.pageNum - 1 }}" tabindex="-1">Previous</a>
+            </li>
+            {% for i in range(g.totalPage) %}
+            <li class="page-item {{ 'active' if i + 1 == g.pageNum }} ">
+                <a class="page-link" href="/manage/video?pageNum={{ i + 1 }}">{{ i + 1 }}</a>
+            </li>
+            {% endfor %}
+            <li class="page-item {{ 'disabled' if g.pageNum == g.totalPage }}">
+                <a class="page-link" href="/manage/video?pageNum={{ g.pageNum + 1 }}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %} 
+
+{% block script %}
+<script>
+
+var edit_video = function(id) {
+    window.location = '/manage/video/edit?id=' + id;
+}
+
+var delete_video = function(id) {
+    if (!confirm('Confirm to delete?')) {
+        return
+    }
+    $.post('/manage/video/delete/' + id, function(data) {
+        var obj = JSON.parse(data)
+        if (obj.success == 'true') {
+            window.location.reload();
+        } else {
+            alert(obj.msg);
+        }
+    });
+}
+
+var set_progress_rate=function(n, total) {
+        //设置进度
+        var rate = (n / total * 100).toFixed(2);
+        if (n > 0) {
+            $(".progress-bar").attr("aria-valuenow", n);
+            $(".progress-bar").attr("aria-valuemax", total);
+            $(".progress-bar").text(rate + "%");
+            $(".progress-bar").css("width", rate + "%");
+        }
+    }
+var upload=function(){
+start();
+}
+
+
+var start=function(){
+setInterval(function () {
+$.post('/GETVIDEOSTUAS', function(response)  {
+       console.log(response);
+            var n = response["n"];
+            var total = response["total"];
+            set_progress_rate(n, total);
+    });
+    }, 1000);
+}
+
+
+
+
+
+
+</script>
+{% endblock %}

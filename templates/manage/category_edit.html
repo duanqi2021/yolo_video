@@ -1,0 +1,38 @@
+{% extends "layout.html" %} 
+
+{% block content %}
+<h3>{{ 'Add New Category' if g.id == 0 else 'Edit Catagory "' + g.name + '"' }}</h3>
+<form class="p-1">
+    <input type="hidden" name="id" id="id" value="{{ g.id }}" />
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" name="name" class="form-control" id="name" placeholder="Enter name" value="{{ g.name }}">
+    </div>
+</form>
+<div class="p-1">
+    <button type="button" class="btn btn-outline-primary" onclick="save();">Save</button>
+</div>
+{% endblock %} 
+
+{% block script %}
+<script>
+var save = function() {
+    var id = $('#id').val()
+    var name = $('#name').val();
+    if (name == '') {
+        alert('Name cannot be empty!');
+        return;
+    }
+
+    $.post('/manage/category/edit', {
+        id: id,
+        name: name
+    }, function(data) {
+        var obj = JSON.parse(data);
+        if (obj.success == 'true') {
+            window.location = '/manage/category';
+        }
+    })
+}
+</script>
+{% endblock %}

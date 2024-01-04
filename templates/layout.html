@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/bootstrap.css') }}">
+
+    <title>{{ g.website_name }}</title>
+    <style>
+    @media (min-width: 576px) {
+        .card-columns {
+            column-count: 1;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .card-columns {
+            column-count: 3;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .card-columns {
+            column-count: 4;
+        }
+    }
+    </style>
+</head>
+
+<body style="padding-top: 60px;">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="/">{{ g.website_name }}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item {{ 'active' if not g.category_id }}">
+                    <a class="nav-link" href="/">首页</a>
+                </li>
+                {% for i in g.categories %}
+                <li class="nav-item {{ 'active' if i.id == g.category_id else '' }}">
+                    <a class="nav-link" href="/index/{{ i.id }}">{{ i.name }}</a>
+                </li>
+                {% endfor %}
+                <li class="nav-item {{ 'active' if g.category_id == 'system' }} dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">系统设置</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/manage/category">类别管理</a>
+                        <a class="dropdown-item" href="/manage/video">视频管理</a>
+                        <a class="dropdown-item" href="/manage/user">用户管理</a>
+                        <a class="dropdown-item" href="javascript:;" onclick="logout()">退出</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        {% block content %} {% endblock %}
+    </div>
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script>
+    var logout = function() {
+        $.post('/logout', function() {
+            window.location = '/login';
+        })
+    }
+    </script>
+    {% block script %} {% endblock %}
+</body>
+
+</html>

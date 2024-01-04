@@ -1,0 +1,72 @@
+{% extends "layout.html" %} 
+
+{% block content %}
+<h3>{{ 'Add New Video' if g.id == 0 else 'Edit Video "' + g.name + '"' }}</h3>
+<form class="p-1">
+    <input type="hidden" name="id" id="id" value="{{ g.id }}" />
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" name="name" class="form-control" id="name" placeholder="Enter name" value="{{ g.name }}">
+    </div>
+    <div class="form-group">
+        <label for="category">Category</label>
+        <select name="category" class="form-control" id="category" placeholder="Please select category">
+        {% for i in g.categories %}
+            <option value="{{ i.id }}" {{'selected' if g.video_category_id == i.id }} >{{ i.name }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="path">Path</label>
+        <input type="text" name="path" class="form-control" id="path" placeholder="Enter path" value="{{ g.path }}">
+    </div>
+    <div class="form-group">
+        <label for="picture">Picture</label>
+        <input type="text" name="picture" class="form-control" id="picture" placeholder="Enter picture" value="{{ g.picture }}">
+    </div>
+</form>
+<div class="p-1">
+    <button type="button" class="btn btn-outline-primary" onclick="save();">Save</button>
+</div>
+{% endblock %} 
+
+{% block script %}
+<script>
+var save = function() {
+    var id = $('#id').val();
+    var category_id = $('#category').val();
+    var name = $('#name').val();
+    var path = $('#path').val();
+    var picture = $('#picture').val();
+    if(category_id == 0) {
+        alert('Please select category!');
+        return;
+    }
+    if (name == '') {
+        alert('Name cannot be empty!');
+        return;
+    }
+    if(path == '') {
+        alert('Path cannot be empty!');
+        return;
+    }
+    if(picture == null) {
+        alert('Picture cannot be empty!');
+        return;
+    }
+
+    $.post('/manage/video/edit', {
+        id: id,
+        category_id: category_id,
+        name: name,
+        path: path,
+        picture: picture
+    }, function(data) {
+        var obj = JSON.parse(data);
+        if (obj.success == 'true') {
+            window.location = '/manage/video';
+        }
+    })
+}
+</script>
+{% endblock %}

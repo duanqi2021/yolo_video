@@ -1,0 +1,24 @@
+{% extends "layout.html" %} 
+
+{% block content %}
+<div class="card-columns">
+    {% for i in g.videos %}
+    <div class="card" style="cursor: pointer;" onclick="window.location='/video/{{ i.id }}';">
+        <img class="card-img-top" src="{{ i.picture }}" alt="{{ i.name }}">
+        <div class="card-body">
+            {{ i.name }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %} 
+
+{% block script %}
+<script>
+var logout = function() {
+    $.post('/logout', function() {
+        window.location = '/login';
+    })
+}
+</script>
+{% endblock %}
