@@ -8,7 +8,7 @@ web_port=8070
 host='localhost'
 port = 3306
 user='root'
-password='duanqi1998'
+password='your password'
 db='video_cms'
 charset='utf8mb4'
 
